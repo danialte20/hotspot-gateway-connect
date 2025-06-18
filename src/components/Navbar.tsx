@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Wifi, Menu, X } from 'lucide-react';
+import { Wifi, Menu, X, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Navbar = () => {
@@ -18,6 +18,9 @@ const Navbar = () => {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  // Check if user has active session
+  const hasActiveSession = localStorage.getItem('hotspotSession');
 
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
@@ -45,7 +48,18 @@ const Navbar = () => {
                 {item.name}
               </Link>
             ))}
-            <Link to="/admin">
+            
+            {/* Show Status button if user has active session */}
+            {hasActiveSession && (
+              <Link to="/status">
+                <Button variant="outline" size="sm" className="flex items-center gap-2">
+                  <Activity className="h-4 w-4" />
+                  Status
+                </Button>
+              </Link>
+            )}
+            
+            <Link to="/secret-admin-portal-2024">
               <Button variant="outline" size="sm">
                 Admin Panel
               </Button>
@@ -81,8 +95,21 @@ const Navbar = () => {
                   {item.name}
                 </Link>
               ))}
+              
+              {/* Show Status link if user has active session */}
+              {hasActiveSession && (
+                <Link
+                  to="/status"
+                  className="block px-3 py-2 text-gray-700 hover:text-blue-600 flex items-center gap-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Activity className="h-4 w-4" />
+                  Status Koneksi
+                </Link>
+              )}
+              
               <Link
-                to="/admin"
+                to="/secret-admin-portal-2024"
                 className="block px-3 py-2 text-gray-700 hover:text-blue-600"
                 onClick={() => setIsOpen(false)}
               >

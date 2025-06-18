@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,6 +16,7 @@ const Login = () => {
   const [voucherCode, setVoucherCode] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleVoucherLogin = (e: React.FormEvent) => {
@@ -33,6 +35,16 @@ const Login = () => {
       title: "Autentikasi Voucher",
       description: `Memproses voucher: ${voucherCode}...`,
     });
+    
+    // Simulate successful login and redirect
+    setTimeout(() => {
+      navigate('/login-success', { 
+        state: { 
+          loginType: 'voucher', 
+          voucherCode: voucherCode 
+        } 
+      });
+    }, 1500);
     
     // Here you would integrate with your backend API
     console.log('Voucher login attempt:', voucherCode);
@@ -54,6 +66,16 @@ const Login = () => {
       title: "Autentikasi Member",
       description: `Login sebagai: ${username}...`,
     });
+    
+    // Simulate successful login and redirect
+    setTimeout(() => {
+      navigate('/login-success', { 
+        state: { 
+          loginType: 'member', 
+          username: username 
+        } 
+      });
+    }, 1500);
     
     // Here you would integrate with your backend API
     console.log('Member login attempt:', { username, password });

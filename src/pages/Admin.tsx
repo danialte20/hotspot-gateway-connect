@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,13 +22,17 @@ import {
   EyeOff,
   CheckCircle,
   XCircle,
-  AlertTriangle
+  AlertTriangle,
+  LogOut
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 
 const Admin = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
   const [showPasswords, setShowPasswords] = useState({
     mysql: false,
     radius: false,
@@ -62,7 +67,13 @@ const Admin = () => {
     }
   });
 
-  const { toast } = useToast();
+  useEffect(() => {
+    // Check if user is authenticated as admin
+    const isAdminAuthenticated = localStorage.getItem('adminAuthenticated');
+    if (!isAdminAuthenticated) {
+      navigate('/secret-admin-portal-2024');
+    }
+  }, [navigate]);
 
   const handleConfigChange = (section: string, field: string, value: string) => {
     setConfig(prev => ({
@@ -111,6 +122,15 @@ const Admin = () => {
     console.log('Configuration saved:', config);
   };
 
+  const handleAdminLogout = () => {
+    localStorage.removeItem('adminAuthenticated');
+    toast({
+      title: "Admin Logout",
+      description: "Anda telah keluar dari panel admin.",
+    });
+    navigate('/');
+  };
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'connected':
@@ -142,15 +162,26 @@ const Admin = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3">
-            <Settings className="h-10 w-10 text-blue-600" />
-            Admin Panel
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Konfigurasi dan monitoring sistem hotspot portal dengan integrasi 
-            FreeRADIUS, MySQL/MariaDB, dan MikroTik RouterOS
-          </p>
+        <div className="flex justify-between items-center mb-12">
+          <div className="text-center flex-1">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3">
+              <Settings className="h-10 w-10 text-blue-600" />
+              Admin Panel
+            </h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Konfigurasi dan monitoring sistem hotspot portal dengan integrasi 
+              FreeRADIUS, MySQL/MariaDB, dan MikroTik RouterOS
+            </p>
+          </div>
+          
+          <Button 
+            onClick={handleAdminLogout}
+            variant="outline"
+            className="flex items-center gap-2 text-red-600 border-red-600 hover:bg-red-50"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout Admin
+          </Button>
         </div>
 
         {/* System Status Overview */}
